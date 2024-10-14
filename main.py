@@ -1,3 +1,5 @@
+import sys
+
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import StreamingResponse
 import numpy as np
@@ -10,16 +12,31 @@ import uuid
 app = FastAPI()
 
 # Загрузка вашей обученной модели
-model_path = 'yolov5/runs/train/bcd/weights/model.pt'  # Путь к вашей обученной модели
+model_path = 'yolov5/runs/train/bcd/weights/best.pt'  # Путь к вашей обученной модели
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
+
+
+# Добавляем директорию YOLOv5 в путь поиска
+yolov5_path = os.path.join(os.getcwd(), 'yolov5')  # или абсолютный путь к yolov5
+sys.path.append(yolov5_path)
+
+from yolov5.models.common import DetectMultiBackend  # Импорт из YOLOv5
+
 try:
-    # Загрузка модели YOLOv5
-    model = torch.hub.load('ultralytics/yolov5', 'custom', path=model_path, device=device)
-    print("Model loaded successfully")
+    model = DetectMultiBackend(model_path, device=device)
 except Exception as e:
     print(f"Error loading model: {e}")
     raise HTTPException(status_code=500, detail="Error loading model")
+
+
+#try:
+    # Загрузка модели YOLOv5
+ #   model = torch.hub.load('ultralytics/yolov5', 'custom', path=model_path, device=device)
+ #   print("Model loaded successfully")
+#except Exception as e:
+#    print(f"Error loading model: {e}")
+ #   raise HTTPException(status_code=500, detail="Error loading model")
 
 # Папка для сохранения изображений
 output_dir = 'data'
@@ -70,4 +87,4 @@ async def predict(file: UploadFile = File(...)):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=4000)
