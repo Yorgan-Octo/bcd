@@ -10,7 +10,7 @@ import uuid
 app = FastAPI()
 
 # Загрузка вашей обученной модели
-model_path = 'yolov5/runs/train/bcd/weights/best.pt'  # Путь к вашей обученной модели
+model_path = 'yolov5/runs/train/bcd/weights/model.pt'  # Путь к вашей обученной модели
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 try:
