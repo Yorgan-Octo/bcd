@@ -9,21 +9,15 @@ import torch
 import os
 import uuid
 
+sys.path.append(os.path.join(os.path.dirname(__file__), 'yolov5'))
 app = FastAPI()
 
 # Загрузка вашей обученной модели
 model_path = 'yolov5/runs/train/bcd/weights/best.pt'  # Путь к вашей обученной модели
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-
-
-# Добавляем директорию YOLOv5 в путь поиска
-yolov5_path = os.path.join(os.getcwd(), 'yolov5')  # или абсолютный путь к yolov5
-sys.path.append(yolov5_path)
-
-from yolov5.models.common import DetectMultiBackend  # Импорт из YOLOv5
-
 try:
+    from yolov5.models.common import DetectMultiBackend  # Импорт из YOLOv5
     model = DetectMultiBackend(model_path, device=device)
 except Exception as e:
     print(f"Error loading model: {e}")
